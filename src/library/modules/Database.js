@@ -240,6 +240,15 @@ Uses Dexie.js third-party plugin on the assets directory
 						},
 						vr: 76,
 					},
+					{
+						ch: {
+							images: "id,image",
+						},
+						up: function (t){
+							console.log("Databse v77", t);
+						},
+						vr: 77,
+					},
 					/*
 					Database versions are only integers, no decimals.
 					7.2 was detected as 72 by chrome, and thus specifying 8 is actually lower version
@@ -408,6 +417,19 @@ Uses Dexie.js third-party plugin on the assets directory
 		PvP :function(data, callback){
 			data.hq = this.index;
 			this.con.pvp.add(data).then(callback);
+		},
+
+		addImage :function(data, callback){
+			console.log("Saving ", data);
+			this.con.images.add(data).then(callback);
+		},
+
+		removeImage :function(data){
+			this.con.images.where('id').equals(data).delete();
+		},
+
+		getImage :function(data, callback){
+			this.con.images.where('id').equals(data).toArray(callback);
 		},
 
 		Log :function (data, { expireAt }){
