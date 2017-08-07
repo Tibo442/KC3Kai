@@ -632,7 +632,7 @@
 		},
 		"markers" : [
 			{
-				"img" : "client/fuel.png",
+				"img" : "client/ammo.png",
 				"pos" : [519, 285],
 				"size": [18, 18]
 			},

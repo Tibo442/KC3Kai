@@ -11,7 +11,7 @@ Does not: edit already-existing src tags in HTML
 	
 	window.KC3FileCacheManager = {
 		errorImage : "../../../../assets/img/ui/empty.png",
-		cdn : "https://raw.githubusercontent.com/KC3Kai/KC3Kai/master/src/",
+		cdn : "https://raw.githubusercontent.com/Tibo442/KC3Kai/master/src/",
 
 		initImageHandler :function() {
 			var self = this;
