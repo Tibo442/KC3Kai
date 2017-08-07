@@ -376,6 +376,7 @@
 		KC3Database.init();
 		KC3Translation.execute();
 		KC3QuestSync.init();
+		KC3FileCacheManager.loadMeta(KC3Meta);
 
 		// Live translations of Quests, only work for EN
 		if(ConfigManager.checkLiveQuests && ConfigManager.language=="en"){

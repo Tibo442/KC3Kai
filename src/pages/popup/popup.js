@@ -72,7 +72,7 @@
 				}
 				
 				if (data.assets_version) {
-					KC3ImageManager.checkForUpdates(assets_version); 
+					KC3FileCacheManager.checkForUpdates(assets_version); 
 					// allowes for adding new cg on the fly when people open popup
 				}
 			}

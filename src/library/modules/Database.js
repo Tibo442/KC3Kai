@@ -242,12 +242,12 @@ Uses Dexie.js third-party plugin on the assets directory
 					},
 					{
 						ch: {
-							images: "id,image",
+							filecaches: "id,data",
 						},
 						up: function (t){
-							console.log("Databse v77", t);
+							console.log("Databse v78", t);
 						},
-						vr: 77,
+						vr: 78,
 					},
 					/*
 					Database versions are only integers, no decimals.
@@ -419,17 +419,17 @@ Uses Dexie.js third-party plugin on the assets directory
 			this.con.pvp.add(data).then(callback);
 		},
 
-		addImage :function(data, callback){
+		addCache :function(data, callback){
 			console.log("Saving ", data);
-			this.con.images.add(data).then(callback);
+			this.con.filecaches.add(data).then(callback);
 		},
 
-		removeImage :function(data){
-			this.con.images.where('id').equals(data).delete();
+		removeCache :function(data){
+			this.con.filecaches.where('id').equals(data).delete();
 		},
 
-		getImage :function(data, callback){
-			this.con.images.where('id').equals(data).toArray(callback);
+		getCache :function(data, callback){
+			this.con.filecaches.where('id').equals(data).toArray(callback);
 		},
 
 		Log :function (data, { expireAt }){
