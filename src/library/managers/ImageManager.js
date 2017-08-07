@@ -4,45 +4,42 @@ KC3改 Images Manager
 Manages images, since they are too thicc for webstore
 Saves and loads to db
 
-TODO: 
-- write update changing stuff
-- check if file is from chrome
-
-
 Does: intercept jquery source changes
 Does not: edit already-existing src tags in HTML 
-
-when update: 
- change commit to new/changed image commit to update cdn
- update a version number somewhere
- write some delete logic in onVersionChange
 */
 (function(){
 	"use strict";
 	
 	window.KC3ImageManager = {
 		errorImage : "../../../../assets/img/ui/empty.png",
-		cdn : "https://cdn.rawgit.com/KC3Kai/KC3Kai/bfb05177dcea38da894c3a7d63c521b7a4df9f51/src/",
+		cdn : "",
+		//imageCache : {},
 
 		init :function() {
 			var self = this;
 			var originalAttr = jQuery.fn.attr;
 
+			self.cdn = "https://raw.githubusercontent.com/KC3Kai/KC3Kai/" + (localStorage.lastestCommit || "1809dc3f110f694c52f9d89dc9404c726ef1f02e") + "/src/";
+			self.checkForUpdate();
+
 			jQuery.fn.attr = function() {
 				var arg = arguments;
 				var jQueryObject = this;
 
-				if(arguments.length > 1 && arguments[0] === "src" && !arguments[1].startsWith(self.cdn))
+				if(arguments.length > 1 && arguments[0] === "src") {
+					var url = arg[1].replace(/(\.\.\/)+/g, "");
+					//arguments[1] = self.imageCache[url] || arguments[1];
 					return originalAttr.apply(this, arguments).error(function() {
-						var url = arg[1].replace(/(\.\.\/)+/g, "");
 						// console.log(url);
 						KC3Database.getImage(url, function( dataURL ) {
+							jQueryObject.unbind("error");
 							if (dataURL.length === 0) {
-								jQueryObject.unbind("error").attr("src", self.cdn + url).error(function() {
+								originalAttr.apply(jQueryObject, ["src", self.cdn + url]).error(function() {
+									jQueryObject.unbind("error");
 									if(arguments.length > 2)
-										jQueryObject.unbind("error").attr("src", arguments[2]);
+										jQueryObject.attr("src", arguments[2]);
 									else
-										jQueryObject.unbind("error").attr("src", self.errorImage);
+										jQueryObject.attr("src", self.errorImage);
 								}).load(function() {
 									var canvas = document.createElement('CANVAS');
 									var ctx = canvas.getContext('2d');
@@ -57,21 +54,42 @@ when update:
 									});
 								});
 							} else {
-								jQueryObject.unbind("error").attr("src", dataURL[0].image);
+								//self.imageCache[url] = dataURL;
+								originalAttr.apply(jQueryObject, ["src", dataURL[0].image]);
 							}
 						});
 					});
-				else
+				} else
 					return originalAttr.apply(this, arguments);
 			};
 		},
 
-		onVersionChange :function( version ){
+		checkForUpdate :function( ){
 			// TODO: clear image cache (when files get edited); pseudo code:
 			// for (var version = oldVersion; version < newVersion; version++)
 			// 	 switch (version)
 			// 		case 1: // delete caches that changed between v1 -> v2
 			// etc 
+			// for now, just some simple clear everything on update
+			var self = this;
+			$.ajax({
+				url: "https://api.github.com/repos/KC3Kai/KC3Kai/commits",
+				dataType: "JSON",
+				success: function(response){
+					if((localStorage.lastestCommit || "0") !== response[0].sha) {
+						console.log("Updating image cache latest commit");
+						localStorage.lastestCommit = response[0].sha;
+						self.cdn = "https://raw.githubusercontent.com/KC3Kai/KC3Kai/" + localStorage.lastestCommit + "/src/";
+						//self.imageCache = {};
+						KC3Database.con.images.clear();
+					} else {
+						/*KC3Database.con.images.toArray(function(response) {
+							for(var i = 0; i < response.length; i++)
+								self.imageCache[response[i].id] = response[i].image;
+						});*/
+					}
+				}
+			});
 		}
 	};
 	window.KC3ImageManager.init();

@@ -1762,17 +1762,7 @@
 								paddedId = (itemObj.masterId<10?"00":itemObj.masterId<100?"0":"") + itemObj.masterId;
 								eqImgSrc = "../../../../assets/img/planes/" + paddedId + ".png";
 								// show local plane image first
-								$(".base_plane_img img", planeBox).attr("src", eqImgSrc)
-									.error(function() {
-										// fall-back to fetch image from online kcs resources
-										var myServerHost = (new KC3Server()).setNum(PlayerManager.hq.server).ip;
-										myServerHost = myServerHost ? "http://" + myServerHost : "..";
-										eqImgSrc = myServerHost + "/kcs/resources/image/slotitem/item_up/" + paddedId + ".png";
-										$(this).unbind("error").attr("src", eqImgSrc)
-											// fail-safe to show a placeholder icon
-											.error(function() { $(this).unbind("error").attr("src",
-												"../../../../assets/img/ui/empty.png"); });
-									});
+								$(".base_plane_img img", planeBox).attr("src", eqImgSrc, "../../../../assets/img/ui/empty.png");
 								$(".base_plane_img", planeBox)
 									.attr("title", itemObj.name())
 									.lazyInitTooltip()
@@ -1780,8 +1770,7 @@
 									.on("dblclick", self.gearDoubleClickFunction);
 								
 								eqIconSrc = "../../../../assets/img/items/"+itemObj.master().api_type[3]+".png";
-								$(".base_plane_icon img", planeBox).attr("src", eqIconSrc)
-									.error(function() { $(this).unbind("error").attr("src", "../../../../assets/img/ui/empty.png"); });
+								$(".base_plane_icon img", planeBox).attr("src", eqIconSrc, "../../../../assets/img/ui/empty.png");
 								$(".base_plane_icon", planeBox)
 									.attr("title", itemObj.htmlTooltip(planeInfo.api_max_count) )
 									.lazyInitTooltip()
